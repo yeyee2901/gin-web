@@ -1,5 +1,7 @@
 # Percobaan Gin Framework
 Percobaan membuat API dengan bahasa Go-lang. 
+![image](https://user-images.githubusercontent.com/55247343/153563216-1f62d9e2-169e-49cf-a95c-bdb5e1daa76b.png)
+
 
 ## Tech Stack
 - [Gin](https://github.com/gin-gonic/gin) - Web framework
