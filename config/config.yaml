@@ -1,0 +1,15 @@
+aplikasi:
+  # mode: debug / release (mengikuti dokumentasi dari Gin framework)
+  mode: debug
+  tmp_folder: tmp
+
+token:
+  exp_time_regist: 7200
+  exp_time_access: 1800
+
+apikey:
+  key: Syalalalalalala
+
+http:
+  timeout: 20
+  max_client: 100

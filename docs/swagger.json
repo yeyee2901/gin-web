@@ -1,0 +1,208 @@
+{
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "Percobaan Swagger \u0026 Gin pada Golang untuk pembuatan API\n\n\u003ch4\u003eNote: HTTP status dari response API secara umum:\u003c/h4\u003e\n- \u003cstrong\u003e200\u003c/strong\u003e : Sukses\n- \u003cstrong\u003e206\u003c/strong\u003e : Error lain\n- \u003cstrong\u003e209\u003c/strong\u003e : Data input salah / tidak valid\n- \u003cstrong\u003e210\u003c/strong\u003e : Error middleware internal\n- \u003cstrong\u003e214\u003c/strong\u003e : Data tidak ditemukan\n- \u003cstrong\u003e401\u003c/strong\u003e : Token invalid\n- \u003cstrong\u003e500\u003c/strong\u003e : Internal server error (fatal)\n\nJika response code tidak \u003cstrong\u003e200\u003c/strong\u003e, maka yang dikembalikan adalah JSON dengan 1 elemen \"msg\"",
+        "title": "Coba Gin Golang",
+        "contact": {
+            "email": "gabriel777sh@gmail.com"
+        },
+        "version": "0.0.1"
+    },
+    "paths": {
+        "/cek_middleware": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "test"
+                ],
+                "summary": "Cek kondisi middleware yang digunakan untuk authorization",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Token Login",
+                        "name": "X-TOKEN",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Operation",
+                        "schema": {
+                            "$ref": "#/definitions/model.UserData"
+                        },
+                        "headers": {
+                            "X-TOKEN": {
+                                "type": "string",
+                                "description": "Token login"
+                            }
+                        }
+                    },
+                    "206": {
+                        "description": "Error lain",
+                        "schema": {
+                            "$ref": "#/definitions/model.FailResponse"
+                        }
+                    },
+                    "207": {
+                        "description": "Gagal Login",
+                        "schema": {
+                            "$ref": "#/definitions/model.FailResponse"
+                        }
+                    },
+                    "209": {
+                        "description": "Invalid JSON input",
+                        "schema": {
+                            "$ref": "#/definitions/model.FailResponse"
+                        }
+                    },
+                    "210": {
+                        "description": "Error Middleware Internal",
+                        "schema": {
+                            "$ref": "#/definitions/model.FailResponse"
+                        }
+                    },
+                    "214": {
+                        "description": "Data Pengguna Tidak Ditemukan",
+                        "schema": {
+                            "$ref": "#/definitions/model.FailResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "Login user dengan informasi dari JSON input.\nJika sukses, pada response header akan disertakan token login (key: X-TOKEN)",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "login"
+                ],
+                "summary": "Login user",
+                "parameters": [
+                    {
+                        "description": "Body JSON input",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UserData"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Operation",
+                        "schema": {
+                            "$ref": "#/definitions/model.LoginResponse"
+                        },
+                        "headers": {
+                            "X-TOKEN": {
+                                "type": "string",
+                                "description": "Token login"
+                            }
+                        }
+                    },
+                    "206": {
+                        "description": "Error lain",
+                        "schema": {
+                            "$ref": "#/definitions/model.FailResponse"
+                        }
+                    },
+                    "207": {
+                        "description": "Gagal Login",
+                        "schema": {
+                            "$ref": "#/definitions/model.FailResponse"
+                        }
+                    },
+                    "209": {
+                        "description": "Invalid JSON input",
+                        "schema": {
+                            "$ref": "#/definitions/model.FailResponse"
+                        }
+                    },
+                    "210": {
+                        "description": "Error Middleware Internal",
+                        "schema": {
+                            "$ref": "#/definitions/model.FailResponse"
+                        }
+                    },
+                    "214": {
+                        "description": "Data Pengguna Tidak Ditemukan",
+                        "schema": {
+                            "$ref": "#/definitions/model.FailResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.FailResponse": {
+            "type": "object",
+            "required": [
+                "msg"
+            ],
+            "properties": {
+                "msg": {
+                    "type": "string",
+                    "example": "Pesan kesalahan"
+                }
+            }
+        },
+        "model.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "nama": {
+                    "type": "string",
+                    "example": "John Doe"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.UserData": {
+            "type": "object",
+            "required": [
+                "nama"
+            ],
+            "properties": {
+                "nama": {
+                    "type": "string",
+                    "example": "John Doe"
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "description": "API yang digunakan untuk login",
+            "name": "login"
+        },
+        {
+            "description": "API yang digunakan untuk coba-coba",
+            "name": "test"
+        }
+    ]
+}

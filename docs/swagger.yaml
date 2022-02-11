@@ -1,0 +1,149 @@
+definitions:
+  model.FailResponse:
+    properties:
+      msg:
+        example: Pesan kesalahan
+        type: string
+    required:
+    - msg
+    type: object
+  model.LoginResponse:
+    properties:
+      nama:
+        example: John Doe
+        type: string
+      token:
+        type: string
+    type: object
+  model.UserData:
+    properties:
+      nama:
+        example: John Doe
+        type: string
+    required:
+    - nama
+    type: object
+info:
+  contact:
+    email: gabriel777sh@gmail.com
+  description: |-
+    Percobaan Swagger & Gin pada Golang untuk pembuatan API
+
+    <h4>Note: HTTP status dari response API secara umum:</h4>
+    - <strong>200</strong> : Sukses
+    - <strong>206</strong> : Error lain
+    - <strong>209</strong> : Data input salah / tidak valid
+    - <strong>210</strong> : Error middleware internal
+    - <strong>214</strong> : Data tidak ditemukan
+    - <strong>401</strong> : Token invalid
+    - <strong>500</strong> : Internal server error (fatal)
+
+    Jika response code tidak <strong>200</strong>, maka yang dikembalikan adalah JSON dengan 1 elemen "msg"
+  title: Coba Gin Golang
+  version: 0.0.1
+paths:
+  /cek_middleware:
+    get:
+      parameters:
+      - description: Token Login
+        in: header
+        name: X-TOKEN
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful Operation
+          headers:
+            X-TOKEN:
+              description: Token login
+              type: string
+          schema:
+            $ref: '#/definitions/model.UserData'
+        "206":
+          description: Error lain
+          schema:
+            $ref: '#/definitions/model.FailResponse'
+        "207":
+          description: Gagal Login
+          schema:
+            $ref: '#/definitions/model.FailResponse'
+        "209":
+          description: Invalid JSON input
+          schema:
+            $ref: '#/definitions/model.FailResponse'
+        "210":
+          description: Error Middleware Internal
+          schema:
+            $ref: '#/definitions/model.FailResponse'
+        "214":
+          description: Data Pengguna Tidak Ditemukan
+          schema:
+            $ref: '#/definitions/model.FailResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Cek kondisi middleware yang digunakan untuk authorization
+      tags:
+      - test
+  /login:
+    post:
+      description: |-
+        Login user dengan informasi dari JSON input.
+        Jika sukses, pada response header akan disertakan token login (key: X-TOKEN)
+      parameters:
+      - description: Body JSON input
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful Operation
+          headers:
+            X-TOKEN:
+              description: Token login
+              type: string
+          schema:
+            $ref: '#/definitions/model.LoginResponse'
+        "206":
+          description: Error lain
+          schema:
+            $ref: '#/definitions/model.FailResponse'
+        "207":
+          description: Gagal Login
+          schema:
+            $ref: '#/definitions/model.FailResponse'
+        "209":
+          description: Invalid JSON input
+          schema:
+            $ref: '#/definitions/model.FailResponse'
+        "210":
+          description: Error Middleware Internal
+          schema:
+            $ref: '#/definitions/model.FailResponse'
+        "214":
+          description: Data Pengguna Tidak Ditemukan
+          schema:
+            $ref: '#/definitions/model.FailResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Login user
+      tags:
+      - login
+schemes:
+- http
+- https
+swagger: "2.0"
+tags:
+- description: API yang digunakan untuk login
+  name: login
+- description: API yang digunakan untuk coba-coba
+  name: test
