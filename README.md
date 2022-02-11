@@ -24,15 +24,25 @@ git clone https://github.com/yeyee2901/gin-web.git
 ```bash
 cd gin-web
 mkdir logs
-mkidr deps
+mkdir deps
 ```
 3. Set Environment Variable GOPATH & install dependency project secara lokal terhadap project
 ```bash
 export GOPATH=$(pwd)/deps
 go get
 ```
-4. Run Project
+4. Download and run `swaggo`
+```bash
+go install github.com/swaggo/swag/cmd/swag@latest
+
+# di direktori root project:
+swag init
+```
+5. Run Project
 ```bash
 go run .   # OR
 go run main.go
 ```
+
+## Notes
+- Setiap kali edit dokumentasi swagger, run `swag init` lagi untuk re-generate file docs yaml
