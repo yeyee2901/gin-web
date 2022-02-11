@@ -13,6 +13,76 @@
         "version": "0.0.1"
     },
     "paths": {
+        "/cek_http": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "test"
+                ],
+                "summary": "Cek kondisi HTTP client pool",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Token Login",
+                        "name": "X-TOKEN",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "headers": {
+                            "X-TOKEN": {
+                                "type": "string",
+                                "description": "Token login"
+                            }
+                        }
+                    },
+                    "206": {
+                        "description": "Error lain",
+                        "schema": {
+                            "$ref": "#/definitions/model.FailResponse"
+                        }
+                    },
+                    "207": {
+                        "description": "Gagal Login",
+                        "schema": {
+                            "$ref": "#/definitions/model.FailResponse"
+                        }
+                    },
+                    "209": {
+                        "description": "Invalid JSON input",
+                        "schema": {
+                            "$ref": "#/definitions/model.FailResponse"
+                        }
+                    },
+                    "210": {
+                        "description": "Error Middleware Internal",
+                        "schema": {
+                            "$ref": "#/definitions/model.FailResponse"
+                        }
+                    },
+                    "214": {
+                        "description": "Data Pengguna Tidak Ditemukan",
+                        "schema": {
+                            "$ref": "#/definitions/model.FailResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/cek_middleware": {
             "get": {
                 "produces": [

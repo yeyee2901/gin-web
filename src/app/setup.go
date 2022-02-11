@@ -7,13 +7,13 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"strings"
 	"time"
 
 	"gopkg.in/yaml.v2"
 
 	"github.com/gin-gonic/gin"
 	"github.com/yeyee2901/gin-web/src/context"
+	"github.com/yeyee2901/gin-web/src/utils"
 )
 
 // LoadConfigFile godoc
@@ -79,10 +79,10 @@ func InitLogger(app *gin.Engine) {
 			formatParam.Request.UserAgent(),
 
 			// untuk membaca request error (jika ada)
-			parseError(formatParam.ErrorMessage),
+			utils.ParseHttpError(formatParam.ErrorMessage),
 
 			// untuk membaca request body
-			readRequestBody(formatParam.Request.Body),
+			utils.ReadRequestBody(formatParam.Request.Body),
 		)
 
 	}
@@ -138,32 +138,4 @@ func InitPanicHandler(app *gin.Engine) {
 
 	// load panic handler
 	app.Use(panicLoggerMiddleware)
-}
-
-
-
-
-// readRequestBody godoc
-// Fungsi helper untuk logger
-func readRequestBody(reqBody io.ReadCloser) string {
-	body, err := io.ReadAll(reqBody)
-
-	if err != nil {
-		return ""
-	}
-
-	strip := strings.ReplaceAll(string(body), "\n", "")
-
-	return fmt.Sprintf("%s", strip)
-}
-
-// parseError godoc
-// Fungsi helper untuk logger
-func parseError(error string) string {
-
-	if len(error) < 1 {
-		return ""
-	}
-
-	return fmt.Sprintf(" - [REQ ERROR] %s", error)
 }

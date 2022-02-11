@@ -19,6 +19,7 @@ func InitEngine(app *gin.Engine, ctx *appContext.AppContext) {
 	// GET ROUTES
 	var URL_GET = map[string]gin.HandlerFunc{
 		"/cek_middleware": appCtx.CekMiddleware,
+		"/cek_http": appCtx.CekHttp,
 	}
 
 	// POST ROUTES

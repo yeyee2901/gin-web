@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 
@@ -36,7 +37,7 @@ type AppContext ctx.AppContext
 // @Failure 214 {object} model.FailResponse             "Data Pengguna Tidak Ditemukan"
 // @Failure 500 {string} Internal Server Fatal Error
 func (appCtx *AppContext) Login(reqContext *gin.Context) {
-    // validasi json input
+	// validasi json input
 	userData := new(m.UserData)
 	err := reqContext.ShouldBindJSON(&userData)
 
@@ -49,7 +50,7 @@ func (appCtx *AppContext) Login(reqContext *gin.Context) {
 		return
 	}
 
-    // get config context
+	// get config context
 	k := ctx.Key("config")
 	config, ok := appCtx.Config.Value(k).(*ctx.Config)
 
@@ -58,8 +59,7 @@ func (appCtx *AppContext) Login(reqContext *gin.Context) {
 		panic("[FATAL] Gagal load config context")
 	}
 
-
-    // generate token
+	// generate token
 	token, err := utils.ComposeToken(config, userData)
 	if err != nil {
 		msg := fmt.Sprintf("Gagal Login: Token gagal dibuat. %s", err.Error())
@@ -71,16 +71,15 @@ func (appCtx *AppContext) Login(reqContext *gin.Context) {
 		return
 	}
 
-    res := &m.LoginResponse{
-        Nama: userData.Nama,
-        Token: token,
-    }
+	res := &m.LoginResponse{
+		Nama:  userData.Nama,
+		Token: token,
+	}
 
-    reqContext.Header("X-TOKEN", token) // set token di header
-    reqContext.JSON(rc.Sukses, res)
-    return
+	reqContext.Header("X-TOKEN", token) // set token di header
+	reqContext.JSON(rc.Sukses, res)
+	return
 }
-
 
 // @Tags test
 // @Router /cek_middleware [get]
@@ -103,22 +102,74 @@ func (appCtx *AppContext) Login(reqContext *gin.Context) {
 func (appCtx *AppContext) CekMiddleware(reqContext *gin.Context) {
 	dataUser, exist := reqContext.Get("userToken")
 	if !exist {
-        failRes := &m.FailResponse{
-            Msg: "Data dari token tidak ada",
-        }
-        reqContext.JSON(rc.TokenInvalid, failRes)
-        return
+		failRes := &m.FailResponse{
+			Msg: "Data dari token tidak ada",
+		}
+		reqContext.JSON(rc.TokenInvalid, failRes)
+		return
 	}
 
-    // validasi bentuk data yang ada di token
-    dataUser, ok := dataUser.(*m.UserData)
-    if !ok {
+	// validasi bentuk data yang ada di token
+	dataUser, ok := dataUser.(*m.UserData)
+	if !ok {
+		failRes := &m.FailResponse{
+			Msg: "Bentuk data di token tidak valid",
+		}
+		reqContext.JSON(rc.TokenInvalid, failRes)
+		return
+	}
+
+	reqContext.JSON(rc.Sukses, dataUser)
+}
+
+// @Tags test
+// @Router /cek_http [get]
+// @Summary Cek kondisi HTTP client pool
+//
+// @Accepts json
+// @Produce json
+//
+// @Param   X-TOKEN header  string              true    "Token Login"
+//
+// @Success 200 {string} Response string
+// @Header  200 {string} X-TOKEN                        "Token login"
+//
+// @Failure 206 {object} model.FailResponse             "Error lain"
+// @Failure 207 {object} model.FailResponse             "Gagal Login"
+// @Failure 209 {object} model.FailResponse             "Invalid JSON input"
+// @Failure 210 {object} model.FailResponse             "Error Middleware Internal"
+// @Failure 214 {object} model.FailResponse             "Data Pengguna Tidak Ditemukan"
+// @Failure 500 {string} Internal Server Fatal Error
+func (appCtx *AppContext) CekHttp(reqContext *gin.Context) {
+	k := ctx.Key("http")
+	client, ok := appCtx.Http.Value(k).(*http.Client)
+
+	// cek type cast
+	if !ok {
+		panic("[FATAL] Gagal load http context")
+	}
+
+	r, err := client.Get("https://google.com")
+
+    if err != nil {
         failRes := &m.FailResponse{
-            Msg: "Bentuk data di token tidak valid",
+            Msg: fmt.Sprintf("Middleware HTTP error: %s", err.Error()),
         }
-        reqContext.JSON(rc.TokenInvalid, failRes)
+
+        reqContext.JSON(rc.ErrorLain, failRes)
         return
     }
 
-	reqContext.JSON(rc.Sukses, dataUser)
+    body := utils.ReadRequestBody(r.Body)
+
+    if len(body) < 1 {
+        failRes := &m.FailResponse{
+            Msg: fmt.Sprintf("Middleware HTTP error: %s", err.Error()),
+        }
+
+        reqContext.JSON(rc.ErrorLain, failRes)
+        return
+    }
+
+    reqContext.JSON(rc.Sukses, body)
 }
