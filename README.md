@@ -36,7 +36,7 @@ go get
 go install github.com/swaggo/swag/cmd/swag@latest
 
 # di direktori root project:
-swag init
+swag init --exclude deps
 ```
 5. Run Project
 ```bash
@@ -45,4 +45,4 @@ go run main.go
 ```
 
 ## Notes
-- Setiap kali edit dokumentasi swagger, run `swag init` lagi untuk re-generate file docs yaml
+- Setiap kali edit dokumentasi swagger, run `swag init --exclude deps` lagi untuk re-generate file docs yaml
