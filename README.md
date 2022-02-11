@@ -18,14 +18,15 @@ Pada percobaan API ini hanya menyertakan 2 routing & 1 middleware.
 ```bash
 git clone https://github.com/yeyee2901/gin-web.git
 ```
-2. Buat direktori `/logs`
+2. Buat direktori `/logs` & `/deps`
 ```bash
 cd gin-web
 mkdir logs
+mkidr deps
 ```
-3. Set Environment Variable GOPATH & install dependency project
+3. Set Environment Variable GOPATH & install dependency project secara lokal terhadap project
 ```bash
-export GOPATH=$(pwd)
+export GOPATH=$(pwd)/deps
 go get
 ```
 4. Run Project
